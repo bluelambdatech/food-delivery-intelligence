@@ -1,6 +1,7 @@
 # pip install boto3
 # pip install pandas
 # pip install python-dotenv
+# https://stackoverflow.com/questions/73642345/how-to-securely-pass-credentials-in-python
 
 import boto3
 import pandas as pd
@@ -17,7 +18,6 @@ def read_s3_file(bucket_name, file_name):
     obj = s3.get_object(Bucket=bucket_name, Key=file_name)
     df = pd.read_csv(obj['Body'])
     return df.head()
-
 
 read_s3_file("uk-naija-datascience-21032023", "ny_apartment_cost_list.csv")
 
