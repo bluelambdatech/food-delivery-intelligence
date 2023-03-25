@@ -7,7 +7,6 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())  # Loads the .env file.
 
-
 def read_s3_file(bucket_name, file_name, num_row = None):
     """
     Reads a file from an S3 bucket and returns its contents as a string.
