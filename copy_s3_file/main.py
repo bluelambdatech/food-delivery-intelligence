@@ -20,7 +20,6 @@ def read_s3_file(bucket_name, file_name):
 
     obj = s3.get_object(Bucket=bucket_name, Key=file_name)
     df = pd.read_csv(obj['Body'])
-    #return df.head()
     return df
 
 
