@@ -1,0 +1,5 @@
+sf_cred:
+  account: ZDHHCNK-CHB49113
+  database: SNOWFLAKE_SAMPLE_DATA
+  schema: TPCDS_SF100TCL
+  warehouse: COMPUTE_WH

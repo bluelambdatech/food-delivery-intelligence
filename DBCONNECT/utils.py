@@ -17,14 +17,15 @@ user = os.getenv("user")
 password = os.getenv("password")
 
 ctx = sc.connect(
-    user='USER',
-    password='password',
-    account="ACCOUNT",
-    schema='SCHEMA',
-    database='DATABASE',
-    role='ROLE',
-    warehouse = "WAREHOUSE"
+    user='BRANNNNY',
+    password='Chinyere1',
+    account='ZDHHCNK-CHB49113',
+    database="SNOWFLAKE_SAMPLE_DATA",
+    schema="TPCDS_SF100TCL",
+    warehouse="COMPUTE_WH"
     )
+
+
 # cur = ctx.cursor()
 # cur.execute("SELECT * FROM STORE")
 # try:
