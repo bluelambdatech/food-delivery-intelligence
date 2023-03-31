@@ -2,6 +2,7 @@
 
 import os
 import io
+from io import StringIO
 import yaml
 import boto3
 import pyarrow.parquet as pq
@@ -10,7 +11,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())  # Loads the .env file.
 
-def read_s3_file(bucket_name, file_name, file_path = None, num_row = None):
+def read_s3_file(bucket_name, file_name, num_row = None):
     """
     Reads a file from an S3 bucket and returns its contents as a string.
     These are the libraries required to use this function:
@@ -22,7 +23,8 @@ def read_s3_file(bucket_name, file_name, file_path = None, num_row = None):
                       aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  ## Fetch variables from the .env file.
                       aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))  ## Fetch variables from the .env file.
 
-    obj = s3.get_object(Bucket=bucket_name, Key=file_name)     
+    obj = s3.get_object(Bucket=bucket_name, Key=file_name)  
+    #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{file_name}")    
 
     if file_name.split(".")[-1] in ["csv", "txt"]:
         df = pd.read_csv(obj['Body'])
@@ -49,17 +51,11 @@ def read_s3_file(bucket_name, file_name, file_path = None, num_row = None):
 
 # We can call the function as follows:
 bucket_name = "uk-naija-datascience-21032023"
-file_name = "uk-gdp-countries.parquet"
-file_path = r"Folder1/Folder2/"
+file_name = "ny_apartment_cost_list.csv"
+key = ""
 
-file_contents = read_s3_file(bucket_name, file_name, file_path, 10)
+file_contents = read_s3_file(bucket_name, file_name)
 print (file_contents)
-
-
-
-# oustanding items:
-# read a yaml file
-# write to an S3 bucket
 
 # sample files in S3 are:
 # omolewa.csv
@@ -79,3 +75,6 @@ print (file_contents)
 # csv (return data frame) - OK
 # yaml (should return a dict) - OK
 # txt - return a dataframe - OK
+
+
+
