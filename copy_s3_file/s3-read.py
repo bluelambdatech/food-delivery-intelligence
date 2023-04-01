@@ -5,6 +5,7 @@ import io
 from io import StringIO
 import yaml
 import boto3
+import botocore
 import pyarrow.parquet as pq
 import pandas as pd
 from dotenv import load_dotenv, find_dotenv
@@ -19,10 +20,14 @@ def read_s3_file(bucket_name, key, num_row = None):
     pandas
     python-dotenv
     """
-    s3 = boto3.client('s3',
-                      aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  ## Fetch variables from the .env file.
-                      aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))  ## Fetch variables from the .env file.
-
+    try:
+        s3 = boto3.client('s3',
+                          aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  ## Fetch variables from the .env file.
+                          aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))  ## Fetch variables from the .env file.
+    except botocore.exceptions.ClientError:
+        exit(403)
+    except botocore.exceptions.ClientError:
+        print()
     obj = s3.get_object(Bucket=bucket_name, Key=file_name)  
     #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{file_name}")
     buffer = io.BytesIO()
