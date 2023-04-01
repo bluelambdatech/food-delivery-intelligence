@@ -26,8 +26,12 @@ def read_s3_file(bucket_name, key, num_row = None):
     obj = s3.get_object(Bucket=bucket_name, Key=file_name)  
     #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{file_name}")
     buffer = io.BytesIO()
-    if file_name.split(".")[-1] in ["csv", "txt"]:
+    file_ext = file_name.split(".")[-1]
+
+    if file_ext in ["csv", "txt"]:
         df = pd.read_csv(obj['Body'])
+        if df.shape[0] == 0:
+            exit(500)
     elif file_name.split(".")[-1] in ["xls", "xlsx"]:
         df = pd.read_excel(io.BytesIO(obj['Body'].read()))
     elif file_name.split(".")[-1] == "json":
@@ -43,6 +47,10 @@ def read_s3_file(bucket_name, key, num_row = None):
         df = pd.read_parquet(buffer)
     elif file_name.split(".")[-1] in ["yaml", "yml"]:
         df = yaml.safe_load(obj["Body"])
+
+    else:
+        print(f"{file_ext} can not be handled")
+        exit(500)
 
     if num_row:
         return df.head(num_row)
