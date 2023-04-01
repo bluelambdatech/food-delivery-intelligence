@@ -41,7 +41,7 @@ def read_s3_file(bucket_name, key, num_row = None):
         object = s3.Object(bucket_name=bucket_name, key=file_name)
         object.download_fileobj(buffer)
         df = pd.read_parquet(buffer)
-    elif file_name.split(".")[-1] == "yaml":
+    elif file_name.split(".")[-1] in ["yaml", "yml"]:
         df = yaml.safe_load(obj["Body"])
 
     if num_row:
