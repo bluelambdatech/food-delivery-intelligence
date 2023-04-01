@@ -11,7 +11,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())  # Loads the .env file.
 
-def read_s3_file(bucket_name, file_name, num_row = None):
+def read_s3_file(bucket_name, key, num_row = None):
     """
     Reads a file from an S3 bucket and returns its contents as a string.
     These are the libraries required to use this function:
@@ -24,8 +24,8 @@ def read_s3_file(bucket_name, file_name, num_row = None):
                       aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))  ## Fetch variables from the .env file.
 
     obj = s3.get_object(Bucket=bucket_name, Key=file_name)  
-    #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{file_name}")    
-
+    #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{file_name}")
+    buffer = io.BytesIO()
     if file_name.split(".")[-1] in ["csv", "txt"]:
         df = pd.read_csv(obj['Body'])
     elif file_name.split(".")[-1] in ["xls", "xlsx"]:
@@ -34,7 +34,7 @@ def read_s3_file(bucket_name, file_name, num_row = None):
         num_row = None
         df = pd.read_json(obj['Body']).to_dict()
     elif file_name.split(".")[-1] == "parquet":
-        buffer = io.BytesIO()
+
         s3 = boto3.resource('s3',
                       aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  
                       aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
