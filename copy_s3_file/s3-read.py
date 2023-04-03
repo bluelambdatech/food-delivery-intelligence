@@ -81,13 +81,7 @@ print (file_contents)
 # how to read a parquet file - https://stackoverflow.com/questions/51027645/how-to-read-a-single-parquet-file-in-s3-into-pandas-dataframe-using-boto3
 
 
-# read_s3_file(bucket_name, file_name)
-# parquet (this will return a data frame) - OK
-# json (return dict)  - OK
-# excel (dataframef)  - OK
-# csv (return data frame) - OK
-# yaml (should return a dict) - OK
-# txt - return a dataframe - OK
+
 
 
 
