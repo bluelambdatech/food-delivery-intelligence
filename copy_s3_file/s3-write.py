@@ -5,6 +5,7 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())  # Loads the .env file.
 
+
 def write_to_s3(bucket_name, file_name):
 
         s3_resource = boto3.resource('s3',

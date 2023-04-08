@@ -22,13 +22,13 @@ def read_s3_file(bucket_name, key, num_row = None):
    """
     try:
         s3 = boto3.client('s3',
-                          aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  
-                          aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))  
+                          aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
+                          aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
     except botocore.exceptions.ClientError:
         exit(403)
     except botocore.exceptions.ClientError:
         print()
-    obj = s3.get_object(Bucket=bucket_name, Key=key)  
+    obj = s3.get_object(Bucket=bucket_name, Key=key)
     #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{key}")
     buffer = io.BytesIO()
     file_ext = key.split(".")[-1]
@@ -43,7 +43,7 @@ def read_s3_file(bucket_name, key, num_row = None):
         df = pd.read_json(obj['Body']).to_dict()
     elif file_ext == "parquet":
         s3 = boto3.resource('s3',
-                      aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  
+                      aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
                       aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
         object = s3.Object(bucket_name=bucket_name, key=key)
         object.download_fileobj(buffer)
@@ -59,28 +59,24 @@ def read_s3_file(bucket_name, key, num_row = None):
         return df.head(num_row)
     return df   ## End of function
 
-
-
-bucket_name = "uk-naija-datascience-21032023"
-key =   "Folder1/Folder2/gdp-countries.parquet"   #this meane the folder path to the file
-
-
-file_contents = read_s3_file(bucket_name, key, 10)
-print (file_contents)
-
-# sample files in S3 are:
-# omolewa.csv
-# ny_apartment_cost_list.csv
-# myfile.txt
-# season1.json
-# hyp.scratch.yaml
-# gdp-countries.parquet 
-# new-sales-sheet.xlsx - https://stackoverflow.com/questions/61723572/how-to-read-excel-file-from-aws-in-python-3/61723955#61723955?newreg=c9c4eb2ab84a4b5cb021bf7603b01c54
-# how to read a parquet file - https://stackoverflow.com/questions/51027645/how-to-read-a-single-parquet-file-in-s3-into-pandas-dataframe-using-boto3
-
-
-
-
+#
+#
+# bucket_name = "uk-naija-datascience-21032023"
+# key =   "Folder1/Folder2/gdp-countries.parquet"   #this meane the folder path to the file
+#
+#
+# file_contents = read_s3_file(bucket_name, key, 10)
+# print (file_contents)
+#
+# # sample files in S3 are:
+# # omolewa.csv
+# # ny_apartment_cost_list.csv
+# # myfile.txt
+# # season1.json
+# # hyp.scratch.yaml
+# # gdp-countries.parquet
+# # new-sales-sheet.xlsx - https://stackoverflow.com/questions/61723572/how-to-read-excel-file-from-aws-in-python-3/61723955#61723955?newreg=c9c4eb2ab84a4b5cb021bf7603b01c54
+# # how to read a parquet file - https://stackoverflow.com/questions/51027645/how-to-read-a-single-parquet-file-in-s3-into-pandas-dataframe-using-boto3
 
 
 
