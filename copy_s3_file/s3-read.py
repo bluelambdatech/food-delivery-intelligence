@@ -66,7 +66,8 @@ key =   "Folder1/Folder2/gdp-countries.parquet"
 file_contents = read_s3_file(bucket_name, key, 10)
 print (file_contents)
 
-# sample files in S3 are:
+
+# sample files in S3 bucket are:
 # omolewa.csv
 # ny_apartment_cost_list.csv
 # myfile.txt
