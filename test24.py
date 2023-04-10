@@ -76,4 +76,4 @@ class ReadWriteS3:
 
 
 file_contents = ReadWriteS3(secret_key='secret_key', access_key='access_key', bucket='bucket')
-file_contents.read_s3_file("flash2590", "staff_sal.csv", 5)
+file_contents.read_s3_file("flash2590", "staff_sal.csv", 10)
