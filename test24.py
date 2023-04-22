@@ -9,28 +9,30 @@ import pandas as pd
 
 
 class ReadWriteS3:
-    def __init__(self, secret_key, access_key, bucket):
-        self.access_key = access_key
-        self.secret_key = secret_key
-        self.s3_resource = boto3.resource('s3',
-                                          aws_access_key_id=access_key,
-                                          aws_secret_access_key=secret_key)
-        self.s3 = boto3.client('s3',
-                               aws_access_key_id=access_key,
-                               aws_secret_access_key=secret_key)
-        self.bucket = bucket
+    def __init__():#self, secret_key, access_key, bucket_name):
+        pass
+
+        # self.access_key = access_key
+        # self.secret_key = secret_key
+        # self.s3_resource = boto3.resource('s3',
+        #                                   aws_access_key_id=access_key,
+        #                                   aws_secret_access_key=secret_key)
+        # self.s3 = boto3.client('s3',
+        #                        aws_access_key_id=access_key,
+        #                        aws_secret_access_key=secret_key)
+        # self.bucket = bucket
 
     def read_s3_file(self, bucket_name, key, num_row=None):
         try:
             s3 = boto3.client('s3',
-                              aws_access_key_id=key, #os.getenv('ACCESS_KEY_ID'),
-                              aws_secret_access_key=bucket_name,)#os.getenv('SECRET_ACCESS_KEY'))
+                              aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
+                              aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
         except botocore.exceptions.ClientError as e:
             print(f'Sorry, unable to locate credentials. Error: {e}')
             return
 
         try:
-            obj = self.s3.get_object(Bucket=self.bucket, Key=key)
+            obj = self.s3.get_object(Bucket=self.bucket_name, Key=key)
         except botocore.exceptions.ClientError as e:
             print(f'Error fetching object from S3. Bucket: {bucket_name}, Key: {key}. Error: {e}')
             return
@@ -75,5 +77,5 @@ class ReadWriteS3:
         return df
 
 
-file_contents = ReadWriteS3(secret_key='secret_key', access_key='access_key', bucket='bucket')
-file_contents.read_s3_file("flash2590", "staff_sal.csv", 10)
+file_contents = ReadWriteS3()#secret_key='secret_key', access_key='access_key', bucket='bucket_name')
+file_contents.read_s3_file("benesek", "staff_sal.csv", 10)

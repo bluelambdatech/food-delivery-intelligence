@@ -1,5 +1,4 @@
 # TASK 3: CREATE A FUNCTION THAT CAN READ ANY FILE FROM S3 BUCKET
-
 import os
 import io
 from io import StringIO
@@ -59,14 +58,13 @@ def read_s3_file(bucket_name, key, num_row = None):
         return df.head(num_row)
     return df   ## End of function
 
+
+bucket_name = "benesek"
+key = "client_details.csv"   #this meane the folder path to the file
 #
 #
-# bucket_name = "uk-naija-datascience-21032023"
-# key =   "Folder1/Folder2/gdp-countries.parquet"   #this meane the folder path to the file
-#
-#
-# file_contents = read_s3_file(bucket_name, key, 10)
-# print (file_contents)
+file_contents = read_s3_file(bucket_name, key, 5)
+print (file_contents)
 #
 # # sample files in S3 are:
 # # omolewa.csv
