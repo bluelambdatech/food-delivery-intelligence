@@ -3,46 +3,53 @@ This file is created by
     Omolewa Adaramola
 """
 
-from io import StringIO
+
+import io
 import boto3
+import botocore
 import pandas as pd
 import os
+from io import StringIO
+import yaml
 from dotenv import load_dotenv, find_dotenv
-
 load_dotenv(find_dotenv())
 
 
+
 class ReadWriteFromS3:
-    def __init__(self, secret_key, access_key, bucketname, key):
+    def __init__(self, aws_access_key_id, aws_secret_access_key, bucket_name, key):
         """
-        :params: bucket_name: str
+        :params: secret_key: str -> aws secret key
+        :params: access_key: str -> aws access key id
+        :params: bucket_name: str -> aws bucket name
+        :params: key: str - > file name
         """
 
         self.s3_client = boto3.client('s3',
-                                      aws_access_key_id=access_key,
-                                      aws_secret_access_key=secret_key
-                                      )
+                                      aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
+                                      aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
         self.s3_resource = boto3.resource('s3',
-                                          aws_access_key_id=access_key,
-                                          aws_secret_access_key=secret_key
-                                          )
-
-        self.bucketname = bucketname
+                                        aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
+                                        aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
+        self.bucket_name = bucket_name
         self.key = key
 
-    def read_s3_file(self, key, num_row=None):
+    def read_s3_file(self, num_row=None):
         """
-        Reads a file from an S3 bucket and returns its contents as a string.
-        These are the libraries required to use this function:
-        :params: filename: str
-        :params: num_rows: int
-        """
-        s3 = boto3.client('s3',
-                           aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  
-                           aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY")) 
-        obj = self.s3_client.get_object(Bucket=self.bucketname, Key=self.key)  ## Gets the file from S3
+        Reads a file from an S3 bucket and returns its contents as a string or dictionary
+        :params: num_rows: int -> number of rows to return
+        :return: pd.DataFrame
+        """    
+        try:
+            s3 = self.s3_client
+        except botocore.exceptions.ClientError:
+            exit(403)
+        except botocore.exceptions.ClientError:
+            print()
+
+        obj = self.s3_client.get_object(Bucket=self.bucket_name, Key=self.key)  ## Gets the file from S3
         buffer = io.BytesIO()
-        file_ext = key.split(".")[-1]
+        file_ext = self.key.split(".")[-1]
         if file_ext in ["csv", "txt"]:
             df = pd.read_csv(obj['Body'])
             if df.shape[0] == 0:
@@ -53,18 +60,19 @@ class ReadWriteFromS3:
             num_row = None
             df = pd.read_json(obj['Body']).to_dict()
         elif file_ext == "parquet":
-            s3 = boto3.resource('s3',
-                        aws_access_key_id=os.getenv('ACCESS_KEY_ID'),  
-                        aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"))
-            object = s3.Object(bucket_name=bucket_name, key=key)
+            s3 = self.s3_resource
+            object = s3.Object(bucket_name=self.bucket_name, key=self.key)
             object.download_fileobj(buffer)
             df = pd.read_parquet(buffer)
         elif file_ext  in ["yaml", "yml"]:
-            df = yaml.safe_load(obj["Body"])
+            if num_row:
+                print(f"This file - {self.key} cannot be handled. Please try again without num_rows specified")
+                exit(500)
+            else:
+                df = yaml.safe_load(obj["Body"])
         else:
-            print(f"{file_ext} can not be handled")
+            print(f"{file_ext} cannot be handled")
             exit(500)
-
         if num_row:
             return df.head(num_row)
         return df   ## End of function
@@ -74,27 +82,35 @@ class ReadWriteFromS3:
         df = pd.read_excel(f"{path}/{filename}")
 
         return df
-
-    def write_to_s3(self, df, key, df_name):
+    
+    def write_to_s3(self):   
+        s3_resource = self.s3_resource
+        csv_buffer = StringIO()
+        df.to_csv(csv_buffer)
+        s3_resource.Object(self.bucket_name, self.key).put(Body=csv_buffer.getvalue())
+        print("Copying file to S3 is now Done............")
+              
+    def write_to_s3(self):
         excel_buffer = StringIO()
         df.to_excel(excel_buffer)
         self.s3_resource.Object(self.bucketname, f'{key}/{df_name}').put(Body=excel_buffer.getvalue())
 
 
-def read_from_local(path, filename):
-    df = pd.read_excel(f"{path}/{filename}")
-    return df
+    def read_from_local(path, filename):
+        df = pd.read_excel(f"{path}/{filename}")
+        return df
 
 
 if __name__ == '__main__':
     # We can call the function as follows:
-    bucket_name = "bluelambdaproject"
-
-    # read_s3_file(bucket_name, file_name)
-
-    readwrite = ReadWriteFromS3(secret_key=os.getenv('ACCESS_KEY_ID'),
-                                access_key=os.getenv("SECRET_ACCESS_KEY"),
-                                bucketname=bucket_name,
-                                key="projectA/newdata")
-    df = readwrite.read_s3_file(file_name="ratings.csv")
+    bucket_name = "uk-naija-datascience-21032023"
+    key = "Folder1/Folder2/updated-file.csv"
+    
+    readwrite = ReadWriteFromS3(aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
+                                aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"),
+                                bucket_name=bucket_name,
+                                key=key)
+    df = readwrite.read_s3_file(key)
     print(df)
+    
+
