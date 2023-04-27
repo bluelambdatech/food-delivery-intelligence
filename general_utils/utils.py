@@ -110,7 +110,7 @@ if __name__ == '__main__':
                                 aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"),
                                 bucket_name=bucket_name,
                                 key=key)
-    df = readwrite.read_s3_file(key)
+    df = readwrite.read_s3_file(num_row=None)
     print(df)
     
 
