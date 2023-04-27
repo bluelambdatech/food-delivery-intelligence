@@ -19,10 +19,10 @@ load_dotenv(find_dotenv())
 class ReadWriteFromS3:
     def __init__(self, aws_access_key_id, aws_secret_access_key, bucket_name, key):
         """
-        :params: secret_key: str -> aws secret key
-        :params: access_key: str -> aws access key id
-        :params: bucket_name: str -> aws bucket name
-        :params: key: str - > file name
+        :param secret_key: str -> aws secret key
+        :param access_key: str -> aws access key id
+        :param bucket_name: str -> aws bucket name
+        :param key: str - > file name
         """
 
         self.s3_client = boto3.client('s3',
@@ -89,9 +89,18 @@ class ReadWriteFromS3:
         df.to_csv(csv_buffer)
         s3_resource.Object(self.bucket_name, self.key).put(Body=csv_buffer.getvalue())
         print("Copying file to S3 is now Done............")
+    
+    def write_2_s3(self):
+        s3 = self.s3_client
+        csv_buffer = StringIO()
+        #df = pd.read_csv(self.key['Body'])
+        #df.to_csv(csv_buffer, header=True, index=False)
+        csv_buffer.seek(0)
+        s3.put_object(Bucket=self.bucket_name, Body=csv_buffer.getvalue(), Key=self.key)
               
     def write_to_s3(self):
         excel_buffer = StringIO()
+        
         df.to_excel(excel_buffer)
         self.s3_resource.Object(self.bucketname, f'{key}/{df_name}').put(Body=excel_buffer.getvalue())
 
@@ -110,7 +119,12 @@ if __name__ == '__main__':
                                 aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"),
                                 bucket_name=bucket_name,
                                 key=key)
-    df = readwrite.read_s3_file(num_row=None)
-    print(df)
+    #to read files from s3 use:
+    df_read = readwrite.read_s3_file(num_row=None)
+    print(df_read)
+    
+    #to write files to s3 use:
+    df_write = readwrite.write_2_s3()
+    print(df_write)
     
 
