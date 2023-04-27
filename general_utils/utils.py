@@ -38,8 +38,8 @@ class ReadWriteFromS3:
     def read_s3_file(self, num_row=None):
         """
         Reads a file from an S3 bucket and returns its contents as a string or dictionary
-        :params: num_rows: int -> number of rows to return
-        :return: pd.DataFrame
+        params: num_rows: int -> number of rows to return
+        return: pd.DataFrame
         """    
         try:
             s3 = self.s3_client
@@ -90,9 +90,9 @@ class ReadWriteFromS3:
         self.s3_resource.Object(self.bucketname, f'{key}/{df_name}').put(Body=excel_buffer.getvalue())
 
 
-def read_from_local(path, filename):
-    df = pd.read_excel(f"{path}/{filename}")
-    return df
+    def read_from_local(path, filename):
+        df = pd.read_excel(f"{path}/{filename}")
+        return df
 
 
 if __name__ == '__main__':
@@ -100,10 +100,9 @@ if __name__ == '__main__':
     bucket_name = "uk-naija-datascience-21032023"
     key = "Folder1/Folder2/updated-file.csv"
     
-    readwrite = ReadWriteFromS3(secret_key=os.getenv('ACCESS_KEY_ID'),
-                                access_key=os.getenv("SECRET_ACCESS_KEY"),
-                                bucketname=bucket_name,
+    readwrite = ReadWriteFromS3(aws_secret_access_key=os.getenv('ACCESS_KEY_ID'),
+                                aws_access_key_id=os.getenv("SECRET_ACCESS_KEY"),
+                                bucket_name=bucket_name,
                                 key=key)
     df = readwrite.read_s3_file(key)
     print(df)
-
