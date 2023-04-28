@@ -15,14 +15,13 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 
-
 class ReadWriteFromS3:
-    def __init__(self, aws_access_key_id, aws_secret_access_key, bucket_name, key):
+    def __init__(self, aws_secret_access_key, aws_access_key_id, bucket_name, key):
         """
-        :param secret_key: str -> aws secret key
-        :param access_key: str -> aws access key id
-        :param bucket_name: str -> aws bucket name
-        :param key: str - > file name
+        :params: secret_key: str -> aws secret key
+        :params: access_key: str -> aws access key id
+        :params: bucket_name: str -> aws bucket name
+        :params: key: str - > file name
         """
 
         self.s3_client = boto3.client('s3',
@@ -37,8 +36,8 @@ class ReadWriteFromS3:
     def read_s3_file(self, num_row=None):
         """
         Reads a file from an S3 bucket and returns its contents as a string or dictionary
-        :params: num_rows: int -> number of rows to return
-        :return: pd.DataFrame
+        params: num_rows: int -> number of rows to return
+        return: pd.DataFrame
         """    
         try:
             s3 = self.s3_client
@@ -71,12 +70,12 @@ class ReadWriteFromS3:
             else:
                 df = yaml.safe_load(obj["Body"])
         else:
-            print(f"{file_ext} cannot be handled")
+            print(f"This file type {file_ext} cannot be handled at this time. Please try again later")
             exit(500)
         if num_row:
             return df.head(num_row)
         return df   ## End of function
-
+    
     def upload_from_local_to_s3(self, path, filename):
 
         df = pd.read_excel(f"{path}/{filename}")
