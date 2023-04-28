@@ -28,7 +28,6 @@ def read_s3_file(bucket_name, key, num_row = None):
     except botocore.exceptions.ClientError:
         print()
     obj = s3.get_object(Bucket=bucket_name, Key=key)
-    #obj = s3.get_object(Bucket=bucket_name, Key=f"{key}/{key}")
     buffer = io.BytesIO()
     file_ext = key.split(".")[-1]
     if file_ext in ["csv", "txt"]:
@@ -48,35 +47,25 @@ def read_s3_file(bucket_name, key, num_row = None):
         object.download_fileobj(buffer)
         df = pd.read_parquet(buffer)
     elif file_ext  in ["yaml", "yml"]:
-        df = yaml.safe_load(obj["Body"])
-
+        if num_row:
+            print(f"This file - {key} cannot be handled. Please try again without num_rows specified")
+            exit(500)
+        else:
+            df = yaml.safe_load(obj["Body"])
     else:
-        print(f"{file_ext} can not be handled")
+        print(f"This file type {file_ext} cannot be handled at this time. Please try again later")
         exit(500)
-
     if num_row:
         return df.head(num_row)
     return df   ## End of function
 
 
-bucket_name = "benesek"
-key = "client_details.csv"   #this meane the folder path to the file
-#
-#
-file_contents = read_s3_file(bucket_name, key, 5)
-print (file_contents)
-#
-# # sample files in S3 are:
-# # omolewa.csv
-# # ny_apartment_cost_list.csv
-# # myfile.txt
-# # season1.json
-# # hyp.scratch.yaml
-# # gdp-countries.parquet
-# # new-sales-sheet.xlsx - https://stackoverflow.com/questions/61723572/how-to-read-excel-file-from-aws-in-python-3/61723955#61723955?newreg=c9c4eb2ab84a4b5cb021bf7603b01c54
-# # how to read a parquet file - https://stackoverflow.com/questions/51027645/how-to-read-a-single-parquet-file-in-s3-into-pandas-dataframe-using-boto3
+bucket_name = "uk-naija-datascience-21032023"
+key = "ny_apartment_cost_list.csv"  
 
 
+file_contents = read_s3_file(bucket_name, key, 10)
+print(file_contents)
 
 
 
