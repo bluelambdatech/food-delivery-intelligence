@@ -15,8 +15,6 @@ from dotenv import load_dotenv, find_dotenv
 
 load_dotenv(find_dotenv())
 
-print ('This is gen utils .py')
-
 class ReadWriteFromS3:
     def __init__(self, aws_secret_access_key, aws_access_key_id, bucket_name, key):
         """
@@ -72,16 +70,14 @@ class ReadWriteFromS3:
             else:
                 df = yaml.safe_load(obj["Body"])
         else:
-            print(f"{file_ext} cannot be handled")
+            print(f"This file type {file_ext} cannot be handled at this time. Please try again later")
             exit(500)
         if num_row:
             return df.head(num_row)
         return df   ## End of function
 
     def upload_from_local_to_s3(self, path, filename):
-
         df = pd.read_excel(f"{path}/{filename}")
-
         return df
 
     def write_to_s3(self, df, key, df_name):

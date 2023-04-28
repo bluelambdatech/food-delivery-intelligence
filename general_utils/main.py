@@ -2,7 +2,7 @@ from utils import *
 
 
 bucket_name = "uk-naija-datascience-21032023"
-key = "hyp.scratch.yaml"
+key = "jupyter.ipynb"
   
 readwrite = ReadWriteFromS3(aws_access_key_id=os.getenv('ACCESS_KEY_ID'),
                             aws_secret_access_key=os.getenv("SECRET_ACCESS_KEY"),
